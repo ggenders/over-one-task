@@ -119,26 +119,31 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8">
-      <div className="container mx-auto max-w-7xl">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
-          <p className="text-muted-foreground font-body mt-2">A space for mindful focus.</p>
-        </header>
-        
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 min-h-[300px] lg:min-h-[400px]">
-              <CupView task={cup} onComplete={handleCompleteTask} />
+    <main className="min-h-screen bg-background text-foreground">
+      {cup ? (
+        <div className="w-full h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+          <CupView task={cup} onComplete={handleCompleteTask} isFocusMode={true} />
+        </div>
+      ) : (
+        <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+          <header className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
+            <p className="text-muted-foreground font-body mt-2">A space for mindful focus.</p>
+          </header>
+          
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+              <div className="lg:col-span-3 min-h-[300px] lg:min-h-[400px]">
+                <CupView task={cup} onComplete={handleCompleteTask} />
+              </div>
+              <div className="lg:col-span-2 min-h-[500px]">
+                <StoneList stones={stones} onAddTask={handleAddTask} onSelectTask={handleSelectTask} />
+              </div>
             </div>
-            <div className="lg:col-span-2 min-h-[500px]">
-              <StoneList stones={stones} onAddTask={handleAddTask} onSelectTask={handleSelectTask} />
-            </div>
-          </div>
-        </DndContext>
-        
-        <MusicToggle />
-      </div>
+          </DndContext>
+        </div>
+      )}
+      <MusicToggle />
     </main>
   );
 }
