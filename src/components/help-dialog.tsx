@@ -5,22 +5,24 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
-export function HelpDialog() {
+interface HelpDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onConfirm: () => void;
+    isGuest: boolean;
+}
+
+export function HelpDialog({ open, onOpenChange, onConfirm, isGuest }: HelpDialogProps) {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full bg-card/60 backdrop-blur-sm hover:bg-accent/20">
-            <HelpCircle className="h-5 w-5 text-foreground/70" />
-            <span className="sr-only">How to use</span>
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px] bg-card/90 backdrop-blur-sm">
         <DialogHeader>
           <DialogTitle className="font-headline text-2xl">How to Use the App</DialogTitle>
@@ -54,6 +56,23 @@ export function HelpDialog() {
                 <p>When you’re done, come back to your list. You can pick another task or stop for the day. Either choice is okay.</p>
             </div>
         </div>
+        <DialogFooter className="gap-2 sm:gap-0">
+            {isGuest ? (
+                <Link href="/" passHref className="w-full">
+                    <Button className="w-full">
+                        <Sparkles className="mr-2 h-5 w-5" />
+                        Sign Up & Remove This
+                    </Button>
+                </Link>
+            ) : (
+                <Button onClick={onConfirm} className="w-full">
+                    Don't Show Again
+                </Button>
+            )}
+             <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full">
+                Close
+            </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

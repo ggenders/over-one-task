@@ -1,12 +1,12 @@
 
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Mountain, Sparkles } from "lucide-react";
+import { Plus, Mountain, Sparkles, HelpCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -65,6 +65,25 @@ export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps
   const [newTaskText, setNewTaskText] = useState("");
   const { toast } = useToast();
   const guestLimitReached = isGuest && stones.length >= 2;
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+  useEffect(() => {
+    const hasSeenHelp = localStorage.getItem('hasSeenHelpDialog');
+    if (isGuest && !hasSeenHelp) {
+        // For guests, we can use sessionStorage to show it only once per session
+        sessionStorage.setItem('hasSeenHelpDialog', 'true');
+        setIsHelpOpen(true);
+    } else if (!isGuest && !hasSeenHelp) {
+        setIsHelpOpen(true);
+    }
+  }, [isGuest]);
+
+  const handleConfirmHelp = () => {
+    if (!isGuest) {
+      localStorage.setItem('hasSeenHelpDialog', 'true');
+    }
+    setIsHelpOpen(false);
+  };
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +114,10 @@ export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps
             </div>
             <div className="flex items-center gap-1">
                 <MusicToggle />
-                <HelpDialog />
+                <Button variant="ghost" size="icon" onClick={() => setIsHelpOpen(true)} className="rounded-full bg-card/60 backdrop-blur-sm hover:bg-accent/20">
+                    <HelpCircle className="h-5 w-5 text-foreground/70" />
+                    <span className="sr-only">How to use</span>
+                </Button>
             </div>
         </div>
       </CardHeader>
@@ -142,6 +164,12 @@ export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps
           </ScrollArea>
         </SortableContext>
       </CardContent>
+      <HelpDialog 
+        open={isHelpOpen} 
+        onOpenChange={setIsHelpOpen}
+        onConfirm={handleConfirmHelp}
+        isGuest={isGuest}
+      />
     </Card>
   );
 }
