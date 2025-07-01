@@ -67,8 +67,6 @@ function IntroContent() {
     }
     
     if (synth.current) {
-      // Release any currently playing notes from the loop to avoid overlap
-      synth.current.releaseAll();
       // Play a final, low note
       synth.current.triggerAttackRelease('C2', '1.5s', Tone.now());
     }
