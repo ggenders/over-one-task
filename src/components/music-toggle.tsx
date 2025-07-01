@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import * as Tone from 'tone';
-import { Music, MusicOff } from 'lucide-react';
+import { Music, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast"
 
@@ -73,7 +73,7 @@ export function MusicToggle() {
 
   return (
     <Button variant="ghost" size="icon" onClick={toggleMusic} className="fixed bottom-6 right-6 z-50 rounded-full h-12 w-12 bg-card/60 backdrop-blur-sm hover:bg-accent/20">
-      {isPlaying ? <MusicOff className="h-6 w-6 text-primary" /> : <Music className="h-6 w-6 text-foreground/70" />}
+      {isPlaying ? <Music className="h-6 w-6 text-primary" /> : <VolumeX className="h-6 w-6 text-foreground/70" />}
       <span className="sr-only">Toggle Music</span>
     </Button>
   );
