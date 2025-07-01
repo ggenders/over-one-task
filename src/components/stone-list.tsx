@@ -87,7 +87,10 @@ export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
-                <CardTitle className="font-headline text-3xl">Stones</CardTitle>
+                <div className="flex items-center gap-3">
+                    <Mountain className="w-8 h-8 text-foreground" />
+                    <CardTitle className="font-headline text-3xl">Stones</CardTitle>
+                </div>
                 <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the bowl.</CardDescription>
             </div>
             <div className="flex items-center gap-1">
