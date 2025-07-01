@@ -31,7 +31,7 @@ export function ReflectionCard() {
       </CardHeader>
       <CardContent>
         <blockquote className="font-headline text-2xl italic text-center text-foreground/80">
-          "{reflection.text}"
+          {reflection.text}
         </blockquote>
         <p className="text-right font-headline text-sm text-muted-foreground mt-4">- {reflection.source}</p>
       </CardContent>
