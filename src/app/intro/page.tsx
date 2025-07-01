@@ -62,17 +62,22 @@ function IntroContent() {
     if (isExiting) return;
     setIsExiting(true);
 
-    loop.current?.stop();
+    if (loop.current) {
+      loop.current.stop();
+    }
+    
     if (synth.current) {
-      synth.current.volume.rampTo(-Infinity, 0.5);
-      synth.current.triggerAttackRelease('C2', '2n', Tone.now());
+      // Release any currently playing notes from the loop to avoid overlap
+      synth.current.releaseAll();
+      // Play a final, low note
+      synth.current.triggerAttackRelease('C2', '1.5s', Tone.now());
     }
 
     setTimeout(() => {
         const isGuest = searchParams.get('guest') === 'true';
         const destination = isGuest ? '/app?guest=true' : '/app';
         router.push(destination);
-    }, 600);
+    }, 800);
   };
   
   const toggleMusic = () => {
