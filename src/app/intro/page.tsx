@@ -6,11 +6,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import * as Tone from 'tone';
 import { Button } from '@/components/ui/button';
 import { Music, VolumeX } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function IntroContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   
   const synth = useRef<Tone.FMSynth | null>(null);
   const loop = useRef<Tone.Loop | null>(null);
@@ -57,9 +59,20 @@ function IntroContent() {
   }, []);
 
   const handleRedirect = () => {
-    const isGuest = searchParams.get('guest') === 'true';
-    const destination = isGuest ? '/app?guest=true' : '/app';
-    router.push(destination);
+    if (isExiting) return;
+    setIsExiting(true);
+
+    loop.current?.stop();
+    if (synth.current) {
+      synth.current.volume.rampTo(-Infinity, 0.5);
+      synth.current.triggerAttackRelease('C2', '2n', Tone.now());
+    }
+
+    setTimeout(() => {
+        const isGuest = searchParams.get('guest') === 'true';
+        const destination = isGuest ? '/app?guest=true' : '/app';
+        router.push(destination);
+    }, 600);
   };
   
   const toggleMusic = () => {
@@ -74,7 +87,10 @@ function IntroContent() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-foreground flex items-center justify-center relative">
+    <main className={cn(
+        "min-h-screen bg-black text-foreground flex items-center justify-center relative transition-opacity duration-500 ease-in-out",
+        isExiting && "opacity-0"
+    )}>
       <video
         // The video file should be placed in the `public` folder
         src="/intro-video.mp4"
