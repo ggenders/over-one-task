@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { CupView } from '@/components/cup-view';
 import { StoneList } from '@/components/stone-list';
 import { ReflectionCard } from '@/components/reflection-card';
@@ -24,6 +26,7 @@ export default function Home() {
   const [stones, setStones] = useState<Task[]>([]);
   const [cup, setCup] = useState<Task | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const sensors = useSensors(useSensor(PointerSensor));
 
   useEffect(() => {
     // This ensures code runs only on the client
@@ -59,6 +62,18 @@ export default function Home() {
       }
     }
   }, [stones, cup, isClient]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setStones((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleAddTask = (taskText: string) => {
     const newTask: Task = { id: Date.now().toString(), text: taskText };
@@ -112,18 +127,20 @@ export default function Home() {
           <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
           <p className="text-muted-foreground font-body mt-2">A space for mindful focus.</p>
         </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-3 flex flex-col gap-8">
-            <div className="min-h-[300px] lg:min-h-[400px]">
-              <CupView task={cup} onComplete={handleCompleteTask} />
+        
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-3 flex flex-col gap-8">
+              <div className="min-h-[300px] lg:min-h-[400px]">
+                <CupView task={cup} onComplete={handleCompleteTask} />
+              </div>
+              <ReflectionCard />
             </div>
-            <ReflectionCard />
+            <div className="lg:col-span-2 min-h-[500px]">
+              <StoneList stones={stones} onAddTask={handleAddTask} onSelectTask={handleSelectTask} />
+            </div>
           </div>
-          <div className="lg:col-span-2 min-h-[500px]">
-            <StoneList stones={stones} onAddTask={handleAddTask} onSelectTask={handleSelectTask} />
-          </div>
-        </div>
+        </DndContext>
         
         <MusicToggle />
       </div>
