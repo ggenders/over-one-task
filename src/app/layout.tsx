@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Bowl and Stone',
-  description: 'when tasks overwhelm',
+  title: 'when tasks overwhelm',
+  description: 'Bowl and Stone',
 };
 
 export default function RootLayout({
