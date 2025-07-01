@@ -25,7 +25,11 @@ export default function Home() {
   const [stones, setStones] = useState<Task[]>([]);
   const [cup, setCup] = useState<Task | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(useSensor(PointerSensor, {
+    activationConstraint: {
+        distance: 8,
+    },
+  }));
 
   useEffect(() => {
     // This ensures code runs only on the client
@@ -65,11 +69,43 @@ export default function Home() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (over && active.id !== over.id) {
+    if (!over) {
+      return;
+    }
+
+    const activeId = String(active.id);
+
+    // Handle dropping on the cup
+    if (over.id === 'cup-droppable') {
+      const taskToMove = stones.find((t) => t.id === activeId);
+      if (taskToMove) {
+        setStones((prevStones) => {
+          const newStones = prevStones.filter((t) => t.id !== activeId);
+          // If there's a task in the cup, move it to the stones list
+          if (cup) {
+            return [...newStones, cup];
+          }
+          return newStones;
+        });
+        setCup(taskToMove);
+      }
+      return;
+    }
+    
+    const overId = String(over.id);
+
+    // Handle reordering stones
+    if (activeId !== overId) {
       setStones((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
+        const oldIndex = items.findIndex((item) => item.id === activeId);
+        const newIndex = items.findIndex((item) => item.id === overId);
+
+        // Only move if both items are in the list
+        if (oldIndex > -1 && newIndex > -1) {
+          return arrayMove(items, oldIndex, newIndex);
+        }
+        
+        return items;
       });
     }
   };
@@ -77,20 +113,6 @@ export default function Home() {
   const handleAddTask = (taskText: string) => {
     const newTask: Task = { id: Date.now().toString(), text: taskText };
     setStones(prevStones => [...prevStones, newTask]);
-  };
-
-  const handleSelectTask = (taskId: string) => {
-    const taskToMove = stones.find(t => t.id === taskId);
-    if (taskToMove) {
-      setStones(prevStones => {
-        const newStones = prevStones.filter(t => t.id !== taskId);
-        if (cup) {
-          return [...newStones, cup];
-        }
-        return newStones;
-      });
-      setCup(taskToMove);
-    }
   };
 
   const handleCompleteTask = () => {
@@ -120,29 +142,29 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {cup ? (
-        <div className="w-full h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-          <CupView task={cup} onComplete={handleCompleteTask} isFocusMode={true} />
-        </div>
-      ) : (
-        <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-          <header className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
-            <p className="text-muted-foreground font-body mt-2">A space for mindful focus.</p>
-          </header>
-          
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        {cup ? (
+          <div className="w-full h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            <CupView task={cup} onComplete={handleCompleteTask} isFocusMode={true} />
+          </div>
+        ) : (
+          <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+            <header className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
+              <p className="text-muted-foreground font-body mt-2">A space for mindful focus.</p>
+            </header>
+            
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               <div className="lg:col-span-3 min-h-[300px] lg:min-h-[400px]">
                 <CupView task={cup} onComplete={handleCompleteTask} />
               </div>
               <div className="lg:col-span-2 min-h-[500px]">
-                <StoneList stones={stones} onAddTask={handleAddTask} onSelectTask={handleSelectTask} />
+                <StoneList stones={stones} onAddTask={handleAddTask} />
               </div>
             </div>
-          </DndContext>
-        </div>
-      )}
+          </div>
+        )}
+      </DndContext>
       <MusicToggle />
     </main>
   );

@@ -1,8 +1,9 @@
 "use client"
 
+import { useDroppable } from "@dnd-kit/core";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Target, Check } from "lucide-react";
+import { Target, Check, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Task = {
@@ -17,10 +18,16 @@ interface CupViewProps {
 }
 
 export function CupView({ task, onComplete, isFocusMode = false }: CupViewProps) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: 'cup-droppable',
+    disabled: isFocusMode,
+  });
+
   return (
-    <Card className={cn(
-        "h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-primary/20",
-        isFocusMode && "w-full max-w-3xl h-auto"
+    <Card ref={setNodeRef} className={cn(
+        "h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-primary/20 transition-all duration-300",
+        isFocusMode && "w-full max-w-3xl h-auto",
+        isOver && "ring-2 ring-accent shadow-[0_0_30px_hsl(var(--accent))] scale-105"
     )}>
       <CardHeader>
         <div className="flex items-center gap-3 text-primary">
@@ -38,8 +45,11 @@ export function CupView({ task, onComplete, isFocusMode = false }: CupViewProps)
             )}>{task.text}</p>
           </div>
         ) : (
-          <div className="text-center p-6">
-            <p className="font-headline text-lg text-muted-foreground">Your cup is empty. <br/> Select a task from your stones to begin.</p>
+          <div className="text-center p-6 flex flex-col items-center justify-center gap-4 text-muted-foreground transition-all duration-300">
+            <Download className={cn("w-10 h-10 transition-transform", isOver && "scale-125 -translate-y-1 text-accent")} />
+            <p className="font-headline text-lg">
+              {isOver ? "Release to begin focus" : "Drag a stone here"}
+            </p>
           </div>
         )}
       </CardContent>
