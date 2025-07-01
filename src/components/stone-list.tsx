@@ -129,8 +129,10 @@ export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps
                   <SortableStoneItem key={stone.id} stone={stone} />
                 ))
               ) : (
-                <div className="h-full flex items-center justify-center">
-                  <p className="text-center font-body text-muted-foreground py-8">Your mind is clear. <br/> No stones to carry.</p>
+                <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                    <Mountain className="w-16 h-16 text-muted-foreground/20 mb-4" />
+                    <p className="font-body text-muted-foreground">Your mind is clear.</p>
+                    <p className="font-body text-muted-foreground text-sm">Add a task to create your first stone.</p>
                 </div>
               )}
             </div>
