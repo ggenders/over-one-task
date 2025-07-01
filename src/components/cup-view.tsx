@@ -1,5 +1,6 @@
 "use client"
 
+import { useRef, useEffect } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,21 @@ export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProp
     disabled: isFocusMode,
   });
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (task || isOver) {
+      video.play().catch(error => {
+        console.warn("Video playback was prevented. This can happen if the user hasn't interacted with the page yet.", error);
+      });
+    } else {
+      video.pause();
+    }
+  }, [task, isOver]);
+
   return (
     <Card ref={setNodeRef} className={cn(
         "h-full flex flex-col shadow-lg border-primary/20 transition-all duration-300 relative overflow-hidden bg-transparent",
@@ -30,8 +46,8 @@ export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProp
         isOver && "ring-2 ring-accent shadow-[0_0_30px_hsl(var(--accent))] scale-105"
     )}>
       <video
+        ref={videoRef}
         src="/bowl-video.mp4"
-        autoPlay
         loop
         muted
         playsInline
