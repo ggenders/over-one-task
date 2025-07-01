@@ -45,7 +45,7 @@ export default function LandingPage() {
                       <span className="text-xs text-muted-foreground">OR</span>
                       <Separator className="flex-1" />
                   </div>
-                  <Link href="/app?guest=true" passHref>
+                  <Link href="/intro?guest=true" passHref>
                       <Button variant="outline" className="w-full font-body text-lg py-6">
                           Continue as Guest
                       </Button>
