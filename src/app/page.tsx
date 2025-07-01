@@ -2,9 +2,12 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { signInWithGoogle, signInWithFacebook } from '@/services/auth';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -21,6 +24,27 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleSignIn = async (provider: 'google' | 'facebook') => {
+    try {
+      if (provider === 'google') {
+        await signInWithGoogle();
+      } else {
+        await signInWithFacebook();
+      }
+      router.push('/intro');
+    } catch (error) {
+      console.error(`${provider} Sign-In Error:`, error);
+      toast({
+        title: "Sign-In Failed",
+        description: `Could not sign in with ${provider}. Please try again.`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <main className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto">
@@ -31,11 +55,11 @@ export default function LandingPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                     <div className="space-y-4">
-                        <Button variant="outline" className="w-full font-body text-lg py-6">
+                        <Button onClick={() => handleSignIn('google')} variant="outline" className="w-full font-body text-lg py-6">
                             <GoogleIcon className="mr-2 h-5 w-5" />
                             Continue with Google
                         </Button>
-                        <Button variant="outline" className="w-full font-body text-lg py-6">
+                        <Button onClick={() => handleSignIn('facebook')} variant="outline" className="w-full font-body text-lg py-6">
                             <FacebookIcon className="mr-2 h-5 w-5" />
                             Continue with Facebook
                         </Button>
