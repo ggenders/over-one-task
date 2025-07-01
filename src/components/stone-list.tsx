@@ -47,9 +47,9 @@ function SortableStoneItem({ stone }: { stone: Task }) {
       {...listeners}
       className="group flex items-center justify-between p-3 rounded-lg bg-background/30 hover:bg-accent/20 transition-colors duration-200 cursor-grab"
     >
-      <div className="flex items-center gap-3 flex-grow text-foreground font-body">
+      <div className="flex items-center gap-3 flex-grow font-body">
         <Mountain className="w-5 h-5 text-accent" />
-        {stone.text}
+        <span className="text-foreground">{stone.text}</span>
       </div>
     </div>
   );
