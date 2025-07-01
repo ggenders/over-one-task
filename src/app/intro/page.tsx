@@ -34,7 +34,7 @@ function IntroContent() {
         loop.current = new Tone.Loop(time => {
           if (synth.current) {
             const note = notes[Math.floor(Math.random() * notes.length)];
-            synth.current.triggerAttackRelease(note, "8n", time);
+            synth.current.triggerAttackRelease(note, "8n");
           }
         }, "4n").start(0);
 
