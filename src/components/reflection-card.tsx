@@ -1,3 +1,5 @@
+"use client";
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const reflections = [
@@ -16,12 +18,16 @@ const reflections = [
 ];
 
 export function ReflectionCard() {
-  const reflection = reflections[0]; 
+  const [reflection, setReflection] = useState(reflections[0]); 
+
+  useEffect(() => {
+    setReflection(reflections[Math.floor(Math.random() * reflections.length)]);
+  }, []);
 
   return (
-    <Card className="bg-accent/20 border-dashed border-accent/40 shadow-md">
+    <Card className="bg-transparent border-2 border-accent/50 shadow-[0_0_15px_hsl(var(--accent)/0.5)] transition-shadow hover:shadow-[0_0_25px_hsl(var(--accent)/0.7)]">
       <CardHeader>
-        <CardTitle className="font-headline text-xl text-accent-foreground/90">A Moment of Reflection</CardTitle>
+        <CardTitle className="font-headline text-xl text-accent">A Moment of Reflection</CardTitle>
       </CardHeader>
       <CardContent>
         <blockquote className="font-headline text-2xl italic text-center text-foreground/80">

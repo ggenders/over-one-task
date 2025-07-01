@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
+        body: ['Chakra Petch', 'sans-serif'],
         headline: ['Literata', 'serif'],
         code: ['monospace'],
       },
