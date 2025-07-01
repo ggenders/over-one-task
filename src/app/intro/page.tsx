@@ -25,7 +25,7 @@ function IntroContent() {
         muted
         playsInline
         onEnded={handleRedirect}
-        className="absolute top-0 left-0 w-full h-full object-cover"
+        className="w-1/2 rounded-lg shadow-2xl shadow-primary/20"
       />
       <div className="absolute bottom-10 right-10 z-10">
         <Button
