@@ -8,6 +8,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { BowlView } from '@/components/cup-view';
 import { StoneList } from '@/components/stone-list';
 import { MusicToggle } from '@/components/music-toggle';
+import { HelpDialog } from '@/components/help-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type Task = {
@@ -171,6 +172,7 @@ function AppContent() {
           </div>
         )}
       </DndContext>
+      <HelpDialog />
       <MusicToggle />
     </main>
   );
