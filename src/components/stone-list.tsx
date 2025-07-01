@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState } from "react";
@@ -10,6 +11,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useToast } from "@/hooks/use-toast";
+import { HelpDialog } from "./help-dialog";
+import { MusicToggle } from "./music-toggle";
 
 type Task = {
   id: string;
@@ -48,7 +51,9 @@ function SortableStoneItem({ stone }: { stone: Task }) {
       className="group flex items-center justify-between p-3 rounded-lg bg-background/30 hover:bg-accent/20 transition-colors duration-200 cursor-grab"
     >
       <div className="flex items-center gap-3 flex-grow font-body">
-        <Mountain className="w-5 h-5 text-accent" />
+        <div className="text-accent">
+            <Mountain className="w-5 h-5" />
+        </div>
         <span className="text-foreground">{stone.text}</span>
       </div>
     </div>
@@ -80,8 +85,16 @@ export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps
   return (
     <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-accent/20">
       <CardHeader>
-        <CardTitle className="font-headline text-3xl">Stones</CardTitle>
-        <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the bowl.</CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle className="font-headline text-3xl">Stones</CardTitle>
+                <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the bowl.</CardDescription>
+            </div>
+            <div className="flex items-center gap-1">
+                <MusicToggle />
+                <HelpDialog />
+            </div>
+        </div>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
         {guestLimitReached ? (
