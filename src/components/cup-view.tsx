@@ -32,7 +32,7 @@ export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProp
       <CardHeader>
         <div className="flex items-center gap-3 text-primary">
           <Target className="w-8 h-8"/>
-          <CardTitle className="font-headline text-3xl">Your Bowl</CardTitle>
+          <CardTitle className="font-headline text-3xl">Bowl</CardTitle>
         </div>
         <CardDescription className="font-body pt-1">The one task you are focusing on.</CardDescription>
       </CardHeader>

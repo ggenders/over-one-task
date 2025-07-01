@@ -67,7 +67,7 @@ export function StoneList({ stones, onAddTask }: StoneListProps) {
   return (
     <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-accent/20">
       <CardHeader>
-        <CardTitle className="font-headline text-3xl">Your Stones</CardTitle>
+        <CardTitle className="font-headline text-3xl">Stones</CardTitle>
         <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the bowl.</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
