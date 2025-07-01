@@ -4,7 +4,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Bowl and Stone',
-  description: 'A space for mindful focus.',
+  description: 'when tasks overwhelm',
 };
 
 export default function RootLayout({

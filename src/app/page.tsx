@@ -27,7 +27,7 @@ export default function LandingPage() {
           <Card className="bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
               <CardHeader className="text-center">
                   <CardTitle className="font-headline text-4xl md:text-5xl">Bowl and Stone</CardTitle>
-                  <CardDescription className="font-body pt-2">A space for mindful focus.</CardDescription>
+                  <CardDescription className="font-body pt-2">when tasks overwhelm</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                     <div className="space-y-4">
