@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'when tasks overwhelm',
-  description: 'one task',
+  title: 'one task',
+  description: 'when tasks overwhelm',
 };
 
 export default function RootLayout({
