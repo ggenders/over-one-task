@@ -41,7 +41,7 @@ export function HelpDialog({ open, onOpenChange, onConfirm, isGuest }: HelpDialo
             </div>
             <div className="space-y-1">
                 <h3 className="font-headline font-bold">Pick One Task</h3>
-                <p>Look over your list and choose one task to focus on. Don’t overthink it—just pick the one that feels right to start with.</p>
+                <p>Look over your list and choose one task to focus on. Don’t overthink it—just pick the one that feels right to start with and drop it into the bowl.</p>
             </div>
             <div className="space-y-1">
                 <h3 className="font-headline font-bold">Focus on That Task</h3>
