@@ -11,15 +11,15 @@ type Task = {
   text: string;
 };
 
-interface CupViewProps {
+interface BowlViewProps {
   task: Task | null;
   onComplete: () => void;
   isFocusMode?: boolean;
 }
 
-export function CupView({ task, onComplete, isFocusMode = false }: CupViewProps) {
+export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProps) {
   const { isOver, setNodeRef } = useDroppable({
-    id: 'cup-droppable',
+    id: 'bowl-droppable',
     disabled: isFocusMode,
   });
 
@@ -32,7 +32,7 @@ export function CupView({ task, onComplete, isFocusMode = false }: CupViewProps)
       <CardHeader>
         <div className="flex items-center gap-3 text-primary">
           <Target className="w-8 h-8"/>
-          <CardTitle className="font-headline text-3xl">Your Cup</CardTitle>
+          <CardTitle className="font-headline text-3xl">Your Bowl</CardTitle>
         </div>
         <CardDescription className="font-body pt-1">The one task you are focusing on.</CardDescription>
       </CardHeader>

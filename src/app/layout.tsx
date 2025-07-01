@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'The Cup and Stone',
+  title: 'Bowl and Stone',
   description: 'A space for mindful focus.',
 };
 

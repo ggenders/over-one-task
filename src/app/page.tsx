@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { CupView } from '@/components/cup-view';
+import { BowlView } from '@/components/cup-view';
 import { StoneList } from '@/components/stone-list';
 import { MusicToggle } from '@/components/music-toggle';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -23,7 +23,7 @@ const initialStones: Task[] = [
 
 export default function Home() {
   const [stones, setStones] = useState<Task[]>([]);
-  const [cup, setCup] = useState<Task | null>(null);
+  const [bowl, setBowl] = useState<Task | null>(null);
   const [isClient, setIsClient] = useState(false);
   const sensors = useSensors(useSensor(PointerSensor, {
     activationConstraint: {
@@ -36,14 +36,14 @@ export default function Home() {
     setIsClient(true);
     try {
       const savedStones = localStorage.getItem('stones');
-      const savedCup = localStorage.getItem('cup');
+      const savedBowl = localStorage.getItem('bowl');
       if (savedStones) {
         setStones(JSON.parse(savedStones));
       } else {
         setStones(initialStones);
       }
-      if (savedCup) {
-        setCup(JSON.parse(savedCup));
+      if (savedBowl) {
+        setBowl(JSON.parse(savedBowl));
       }
     } catch (error) {
       console.error("Failed to load state from localStorage", error);
@@ -55,16 +55,16 @@ export default function Home() {
     if (isClient) {
       try {
         localStorage.setItem('stones', JSON.stringify(stones));
-        if (cup) {
-          localStorage.setItem('cup', JSON.stringify(cup));
+        if (bowl) {
+          localStorage.setItem('bowl', JSON.stringify(bowl));
         } else {
-          localStorage.removeItem('cup');
+          localStorage.removeItem('bowl');
         }
       } catch (error) {
         console.error("Failed to save state to localStorage", error);
       }
     }
-  }, [stones, cup, isClient]);
+  }, [stones, bowl, isClient]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -75,19 +75,19 @@ export default function Home() {
 
     const activeId = String(active.id);
 
-    // Handle dropping on the cup
-    if (over.id === 'cup-droppable') {
+    // Handle dropping on the bowl
+    if (over.id === 'bowl-droppable') {
       const taskToMove = stones.find((t) => t.id === activeId);
       if (taskToMove) {
         setStones((prevStones) => {
           const newStones = prevStones.filter((t) => t.id !== activeId);
-          // If there's a task in the cup, move it to the stones list
-          if (cup) {
-            return [...newStones, cup];
+          // If there's a task in the bowl, move it to the stones list
+          if (bowl) {
+            return [...newStones, bowl];
           }
           return newStones;
         });
-        setCup(taskToMove);
+        setBowl(taskToMove);
       }
       return;
     }
@@ -116,7 +116,7 @@ export default function Home() {
   };
 
   const handleCompleteTask = () => {
-    setCup(null);
+    setBowl(null);
   };
   
   if (!isClient) {
@@ -143,20 +143,20 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        {cup ? (
+        {bowl ? (
           <div className="w-full h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-            <CupView task={cup} onComplete={handleCompleteTask} isFocusMode={true} />
+            <BowlView task={bowl} onComplete={handleCompleteTask} isFocusMode={true} />
           </div>
         ) : (
           <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <header className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
+              <h1 className="text-4xl md:text-5xl font-headline font-bold">Bowl and Stone</h1>
               <p className="text-muted-foreground font-body mt-2">A space for mindful focus.</p>
             </header>
             
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               <div className="lg:col-span-3 min-h-[300px] lg:min-h-[400px]">
-                <CupView task={cup} onComplete={handleCompleteTask} />
+                <BowlView task={bowl} onComplete={handleCompleteTask} />
               </div>
               <div className="lg:col-span-2 min-h-[500px]">
                 <StoneList stones={stones} onAddTask={handleAddTask} />
