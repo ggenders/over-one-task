@@ -5,7 +5,6 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type D
 import { arrayMove } from '@dnd-kit/sortable';
 import { CupView } from '@/components/cup-view';
 import { StoneList } from '@/components/stone-list';
-import { ReflectionCard } from '@/components/reflection-card';
 import { MusicToggle } from '@/components/music-toggle';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -107,9 +106,8 @@ export default function Home() {
             <Skeleton className="h-4 w-1/2 mx-auto mt-4" />
           </header>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 flex flex-col gap-8">
+            <div className="lg:col-span-3">
               <Skeleton className="h-[300px] lg:h-[400px] w-full" />
-              <Skeleton className="h-[200px] w-full" />
             </div>
             <div className="lg:col-span-2">
               <Skeleton className="h-[500px] w-full" />
@@ -130,11 +128,8 @@ export default function Home() {
         
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 flex flex-col gap-8">
-              <div className="min-h-[300px] lg:min-h-[400px]">
-                <CupView task={cup} onComplete={handleCompleteTask} />
-              </div>
-              <ReflectionCard />
+            <div className="lg:col-span-3 min-h-[300px] lg:min-h-[400px]">
+              <CupView task={cup} onComplete={handleCompleteTask} />
             </div>
             <div className="lg:col-span-2 min-h-[500px]">
               <StoneList stones={stones} onAddTask={handleAddTask} onSelectTask={handleSelectTask} />
