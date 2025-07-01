@@ -4,7 +4,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'when tasks overwhelm',
-  description: 'Bowl and Stone',
+  description: 'one task',
 };
 
 export default function RootLayout({
