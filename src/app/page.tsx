@@ -132,8 +132,22 @@ function SignUpForm() {
             router.push('/intro');
         } catch (error: any) {
             let description = "Could not create account. Please try again.";
-            if (error.code === 'auth/email-already-in-use') {
-                description = "This email is already in use. Please sign in instead.";
+            if (error.code) {
+                 switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        description = "This email is already registered. Please use the 'Sign In' tab.";
+                        break;
+                    case 'auth/weak-password':
+                        description = "The password is too weak. It must be at least 6 characters long.";
+                        break;
+                    case 'auth/invalid-email':
+                        description = "The email address is not valid.";
+                        break;
+                    default:
+                        description = `An unexpected error occurred. Please try again. (${error.code})`;
+                }
+            } else if (error.message) {
+                description = error.message;
             }
             toast({
                 title: "Sign-Up Failed",
@@ -193,9 +207,26 @@ function SignInForm() {
             await signInWithEmailPassword(data.email, data.password);
             router.push('/intro');
         } catch (error: any) {
+            let description = "An unexpected error occurred. Please try again.";
+            if (error.code) {
+                switch (error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/user-not-found': // Included for older SDK versions
+                    case 'auth/wrong-password': // Included for older SDK versions
+                        description = "The email or password you entered is incorrect. Please try again.";
+                        break;
+                    case 'auth/user-disabled':
+                        description = "This account has been disabled.";
+                        break;
+                    default:
+                        description = `An error occurred. Please check configuration and try again. (${error.code})`;
+                }
+            } else if (error.message) {
+                description = error.message;
+            }
             toast({
                 title: "Sign-In Failed",
-                description: "Invalid email or password. Please try again.",
+                description: description,
                 variant: "destructive",
             });
         }
