@@ -8,6 +8,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { BowlView } from '@/components/cup-view';
 import { StoneList } from '@/components/stone-list';
 import { Skeleton } from '@/components/ui/skeleton';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 
 type Task = {
   id: string;
@@ -22,10 +24,15 @@ const initialStones: Task[] = [
   { id: '5', text: 'Plan dinner for tonight' }
 ];
 
+const OWNER_EMAIL = 'graysongenders@gmail.com';
+
 function AppContent() {
   const [stones, setStones] = useState<Task[]>([]);
   const [bowl, setBowl] = useState<Task | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthLoading, setAuthLoading] = useState(true);
+
   const sensors = useSensors(useSensor(PointerSensor, {
     activationConstraint: {
         distance: 8,
@@ -33,7 +40,27 @@ function AppContent() {
   }));
   
   const searchParams = useSearchParams();
-  const isGuest = searchParams.get('guest') === 'true';
+  const isGuestQuery = searchParams.get('guest') === 'true';
+
+  useEffect(() => {
+    // Firebase auth is only available on the client
+    if (!auth) {
+        setAuthLoading(false);
+        return;
+    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  const isOwner = user?.email === OWNER_EMAIL;
+  // A user is a guest if they are not logged in and came via the guest link.
+  // Any logged in user, including the owner, is not a guest.
+  const isGuest = !user && isGuestQuery;
+
 
   useEffect(() => {
     setIsClient(true);
@@ -124,7 +151,7 @@ function AppContent() {
     setBowl(null);
   };
   
-  if (!isClient) {
+  if (!isClient || isAuthLoading) {
     return (
       <main className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8">
         <div className="container mx-auto max-w-7xl">
@@ -164,7 +191,7 @@ function AppContent() {
                 <BowlView task={bowl} onComplete={handleCompleteTask} />
               </div>
               <div className="lg:col-span-2 min-h-[500px]">
-                <StoneList stones={stones} onAddTask={handleAddTask} isGuest={isGuest} />
+                <StoneList stones={stones} onAddTask={handleAddTask} isGuest={isGuest} isOwner={isOwner} />
               </div>
             </div>
           </div>

@@ -23,6 +23,7 @@ interface StoneListProps {
   stones: Task[];
   onAddTask: (text: string) => void;
   isGuest?: boolean;
+  isOwner?: boolean;
 }
 
 function SortableStoneItem({ stone }: { stone: Task }) {
@@ -61,22 +62,32 @@ function SortableStoneItem({ stone }: { stone: Task }) {
 }
 
 
-export function StoneList({ stones, onAddTask, isGuest = false }: StoneListProps) {
+export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false }: StoneListProps) {
   const [newTaskText, setNewTaskText] = useState("");
   const { toast } = useToast();
   const guestLimitReached = isGuest && stones.length >= 2;
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
-    const hasSeenHelp = localStorage.getItem('hasSeenHelpDialog');
-    if (isGuest && !hasSeenHelp) {
-        // For guests, we can use sessionStorage to show it only once per session
-        sessionStorage.setItem('hasSeenHelpDialog', 'true');
-        setIsHelpOpen(true);
-    } else if (!isGuest && !hasSeenHelp) {
-        setIsHelpOpen(true);
+    if (isOwner) {
+      // The owner is recognized and will not see the help dialog.
+      // We can also permanently mark it as seen for them.
+      localStorage.setItem('hasSeenHelpDialog', 'true');
+      setIsHelpOpen(false);
+      return;
     }
-  }, [isGuest]);
+    
+    if (isGuest) {
+        if (sessionStorage.getItem('hasSeenHelpDialog') !== 'true') {
+            setIsHelpOpen(true);
+            sessionStorage.setItem('hasSeenHelpDialog', 'true');
+        }
+    } else { // Registered user
+        if (localStorage.getItem('hasSeenHelpDialog') !== 'true') {
+            setIsHelpOpen(true);
+        }
+    }
+  }, [isGuest, isOwner]);
 
   const handleConfirmHelp = () => {
     if (!isGuest) {
