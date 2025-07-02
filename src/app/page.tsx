@@ -3,11 +3,17 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle, signInWithFacebook } from '@/services/auth';
+import { signInWithGoogle, signInWithFacebook, signInWithEmailPassword, signUpWithEmailPassword } from '@/services/auth';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -23,11 +29,139 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
+const authFormSchema = z.object({
+    email: z.string().email({ message: "Please enter a valid email." }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+});
+
+type AuthFormValues = z.infer<typeof authFormSchema>;
+
+function SignUpForm() {
+    const router = useRouter();
+    const { toast } = useToast();
+    const form = useForm<AuthFormValues>({
+        resolver: zodResolver(authFormSchema),
+        defaultValues: { email: "", password: "" },
+    });
+
+    const onSubmit = async (data: AuthFormValues) => {
+        try {
+            await signUpWithEmailPassword(data.email, data.password);
+            router.push('/intro');
+        } catch (error: any) {
+            let description = "Could not create account. Please try again.";
+            if (error.code === 'auth/email-already-in-use') {
+                description = "This email is already in use. Please sign in instead.";
+            }
+            toast({
+                title: "Sign-Up Failed",
+                description: description,
+                variant: "destructive",
+            });
+        }
+    };
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input placeholder="name@example.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                                <Input type="password" placeholder="••••••••" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <Button type="submit" className="w-full font-body text-lg py-6" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Creating Account..." : "Create Account"}
+                </Button>
+            </form>
+        </Form>
+    );
+}
+
+function SignInForm() {
+    const router = useRouter();
+    const { toast } = useToast();
+    const form = useForm<AuthFormValues>({
+        resolver: zodResolver(authFormSchema),
+        defaultValues: { email: "", password: "" },
+    });
+
+    const onSubmit = async (data: AuthFormValues) => {
+        try {
+            await signInWithEmailPassword(data.email, data.password);
+            router.push('/intro');
+        } catch (error: any) {
+            toast({
+                title: "Sign-In Failed",
+                description: "Invalid email or password. Please try again.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input placeholder="name@example.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                                <Input type="password" placeholder="••••••••" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <Button type="submit" className="w-full font-body text-lg py-6" disabled={form.formState.isSubmitting}>
+                     {form.formState.isSubmitting ? "Signing In..." : "Sign In"}
+                </Button>
+            </form>
+        </Form>
+    );
+}
+
+
 export default function LandingPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSignIn = async (provider: 'google' | 'facebook') => {
+  const handleSocialSignIn = async (provider: 'google' | 'facebook') => {
     try {
       if (provider === 'google') {
         await signInWithGoogle();
@@ -53,27 +187,41 @@ export default function LandingPage() {
                   <CardTitle className="font-headline text-4xl md:text-5xl">one task</CardTitle>
                   <CardDescription className="font-body pt-2">when tasks overwhelm</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                        <Button onClick={() => handleSignIn('google')} variant="outline" className="w-full font-body text-lg py-6">
-                            <GoogleIcon className="mr-2 h-5 w-5" />
-                            Continue with Google
+              <CardContent>
+                <Tabs defaultValue="signin" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="signin">Sign In</TabsTrigger>
+                        <TabsTrigger value="signup">Create Account</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="signin" className="pt-4">
+                        <SignInForm />
+                    </TabsContent>
+                    <TabsContent value="signup" className="pt-4">
+                        <SignUpForm />
+                    </TabsContent>
+                </Tabs>
+
+                <div className="flex items-center space-x-2 my-6">
+                    <Separator className="flex-1" />
+                    <span className="text-xs text-muted-foreground">OR</span>
+                    <Separator className="flex-1" />
+                </div>
+                
+                <div className="space-y-4">
+                    <Button onClick={() => handleSocialSignIn('google')} variant="outline" className="w-full font-body text-lg py-6">
+                        <GoogleIcon className="mr-2 h-5 w-5" />
+                        Continue with Google
+                    </Button>
+                    <Button onClick={() => handleSocialSignIn('facebook')} variant="outline" className="w-full font-body text-lg py-6">
+                        <FacebookIcon className="mr-2 h-5 w-5" />
+                        Continue with Facebook
+                    </Button>
+                    <Link href="/intro?guest=true" passHref>
+                        <Button variant="outline" className="w-full font-body text-lg py-6">
+                            Continue as Guest
                         </Button>
-                        <Button onClick={() => handleSignIn('facebook')} variant="outline" className="w-full font-body text-lg py-6">
-                            <FacebookIcon className="mr-2 h-5 w-5" />
-                            Continue with Facebook
-                        </Button>
-                    </div>
-                  <div className="flex items-center space-x-2">
-                      <Separator className="flex-1" />
-                      <span className="text-xs text-muted-foreground">OR</span>
-                      <Separator className="flex-1" />
-                  </div>
-                  <Link href="/intro?guest=true" passHref>
-                      <Button variant="outline" className="w-full font-body text-lg py-6">
-                          Continue as Guest
-                      </Button>
-                  </Link>
+                    </Link>
+                </div>
               </CardContent>
           </Card>
       </div>

@@ -1,6 +1,13 @@
 
 import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, type UserCredential } from 'firebase/auth';
+import { 
+    GoogleAuthProvider, 
+    FacebookAuthProvider, 
+    signInWithPopup, 
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    type UserCredential 
+} from 'firebase/auth';
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -22,4 +29,14 @@ export const signInWithFacebook = async (): Promise<UserCredential> => {
     checkAuth();
     // We can safely use the non-null assertion (!) because checkAuth would have thrown an error if auth was null.
     return await signInWithPopup(auth!, facebookProvider);
+};
+
+export const signUpWithEmailPassword = async (email: string, password: string): Promise<UserCredential> => {
+    checkAuth();
+    return await createUserWithEmailAndPassword(auth!, email, password);
+};
+
+export const signInWithEmailPassword = async (email: string, password: string): Promise<UserCredential> => {
+    checkAuth();
+    return await signInWithEmailAndPassword(auth!, email, password);
 };
