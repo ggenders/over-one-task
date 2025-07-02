@@ -6,6 +6,7 @@ import {
     signInWithPopup, 
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
     type UserCredential 
 } from 'firebase/auth';
 
@@ -39,4 +40,9 @@ export const signUpWithEmailPassword = async (email: string, password: string): 
 export const signInWithEmailPassword = async (email: string, password: string): Promise<UserCredential> => {
     checkAuth();
     return await signInWithEmailAndPassword(auth!, email, password);
+};
+
+export const sendPasswordReset = async (email: string): Promise<void> => {
+    checkAuth();
+    return await sendPasswordResetEmail(auth!, email);
 };

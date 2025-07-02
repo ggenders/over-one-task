@@ -13,7 +13,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle, signInWithFacebook, signInWithEmailPassword, signUpWithEmailPassword } from '@/services/auth';
+import { signInWithGoogle, signInWithFacebook, signInWithEmailPassword, signUpWithEmailPassword, sendPasswordReset } from '@/services/auth';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -35,6 +37,86 @@ const authFormSchema = z.object({
 });
 
 type AuthFormValues = z.infer<typeof authFormSchema>;
+
+const forgotPasswordSchema = z.object({
+    email: z.string().email({ message: "Please enter a valid email." }),
+});
+
+type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+
+function ForgotPasswordDialog() {
+    const { toast } = useToast();
+    const [open, setOpen] = useState(false);
+    const form = useForm<ForgotPasswordValues>({
+        resolver: zodResolver(forgotPasswordSchema),
+        defaultValues: { email: "" },
+    });
+
+    const onSubmit = async (data: ForgotPasswordValues) => {
+        try {
+            await sendPasswordReset(data.email);
+            toast({
+                title: "Password Reset Email Sent",
+                description: "Check your inbox for a link to reset your password.",
+            });
+            form.reset();
+            setOpen(false); // Close dialog on success
+        } catch (error: any) {
+            let description = "Could not send reset email. Please try again.";
+            if (error.code === 'auth/user-not-found') {
+                description = "No account found with this email address.";
+            }
+            toast({
+                title: "Request Failed",
+                description: description,
+                variant: "destructive",
+            });
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="link" size="sm" className="p-0 h-auto self-start text-sm font-normal text-muted-foreground hover:text-primary">
+                    Forgot Password?
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Reset Password</DialogTitle>
+                    <DialogDescription>
+                        Enter your email address and we'll send you a link to reset your password.
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="name@example.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                {form.formState.isSubmitting ? "Sending..." : "Send Reset Link"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
 
 function SignUpForm() {
     const router = useRouter();
@@ -140,7 +222,10 @@ function SignInForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <div className="flex items-center justify-between">
+                                <FormLabel>Password</FormLabel>
+                                <ForgotPasswordDialog />
+                            </div>
                             <FormControl>
                                 <Input type="password" placeholder="••••••••" {...field} />
                             </FormControl>
