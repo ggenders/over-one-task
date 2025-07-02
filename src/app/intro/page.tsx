@@ -13,9 +13,31 @@ function IntroContent() {
   const searchParams = useSearchParams();
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const exitingRef = useRef(false);
   
   const synth = useRef<Tone.FMSynth | null>(null);
   const loop = useRef<Tone.Loop | null>(null);
+
+  const handleRedirect = () => {
+    if (exitingRef.current) return;
+    exitingRef.current = true;
+    setIsExiting(true);
+
+    if (loop.current) {
+      loop.current.stop();
+    }
+    
+    if (synth.current) {
+      // Play a final, low note
+      synth.current.triggerAttackRelease('C2', '1.5s', Tone.now());
+    }
+
+    setTimeout(() => {
+        const isGuest = searchParams.get('guest') === 'true';
+        const destination = isGuest ? '/app?guest=true' : '/app';
+        router.push(destination);
+    }, 800);
+  };
 
   useEffect(() => {
     const initMusic = async () => {
@@ -48,6 +70,8 @@ function IntroContent() {
     
     initMusic();
 
+    const redirectTimeout = setTimeout(handleRedirect, 6000);
+
     return () => {
       if (Tone.Transport.state === 'started') {
         Tone.Transport.stop();
@@ -55,28 +79,9 @@ function IntroContent() {
       Tone.Transport.cancel();
       synth.current?.dispose();
       loop.current?.dispose();
+      clearTimeout(redirectTimeout);
     };
   }, []);
-
-  const handleRedirect = () => {
-    if (isExiting) return;
-    setIsExiting(true);
-
-    if (loop.current) {
-      loop.current.stop();
-    }
-    
-    if (synth.current) {
-      // Play a final, low note
-      synth.current.triggerAttackRelease('C2', '1.5s', Tone.now());
-    }
-
-    setTimeout(() => {
-        const isGuest = searchParams.get('guest') === 'true';
-        const destination = isGuest ? '/app?guest=true' : '/app';
-        router.push(destination);
-    }, 800);
-  };
   
   const toggleMusic = () => {
       if (!synth.current) return;
