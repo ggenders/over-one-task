@@ -269,7 +269,7 @@ export default function LandingPage() {
       <div className="w-full max-w-md mx-auto">
           <Card className="bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
               <CardHeader className="text-center">
-                  <CardTitle className="font-headline text-4xl md:text-5xl">one task</CardTitle>
+                  <CardTitle className="font-headline text-4xl md:text-5xl">Over one task</CardTitle>
                   <CardDescription className="font-body pt-2">when tasks overwhelm</CardDescription>
               </CardHeader>
               <CardContent>

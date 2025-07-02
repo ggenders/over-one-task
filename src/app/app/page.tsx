@@ -155,7 +155,7 @@ function AppContent() {
         ) : (
           <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <header className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-headline font-bold">one task</h1>
+              <h1 className="text-4xl md:text-5xl font-headline font-bold">Over one task</h1>
               <p className="text-muted-foreground font-body mt-2">when tasks overwhelm</p>
             </header>
             
