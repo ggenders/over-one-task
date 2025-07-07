@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState, useEffect } from "react";
@@ -12,7 +11,6 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { useToast } from "@/hooks/use-toast";
 import { HelpDialog } from "./help-dialog";
-import { MusicToggle } from "./music-toggle";
 
 type Task = {
   id: string;
@@ -124,7 +122,6 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false 
                 <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the bowl.</CardDescription>
             </div>
             <div className="flex items-center gap-1">
-                <MusicToggle />
                 <Button variant="ghost" size="icon" onClick={() => setIsHelpOpen(true)} className="rounded-full bg-card/60 backdrop-blur-sm hover:bg-accent/20">
                     <HelpCircle className="h-5 w-5 text-foreground/70" />
                     <span className="sr-only">How to use</span>
