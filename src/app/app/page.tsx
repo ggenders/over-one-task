@@ -10,6 +10,7 @@ import { StoneList } from '@/components/stone-list';
 import { Skeleton } from '@/components/ui/skeleton';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User } from 'firebase/auth';
+import { getDailyReflection } from '@/ai/flows/daily-reflection-flow';
 
 type Task = {
   id: string;
@@ -32,6 +33,8 @@ function AppContent() {
   const [isClient, setIsClient] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isAuthLoading, setAuthLoading] = useState(true);
+  const [reflection, setReflection] = useState<string>('');
+  const [isReflectionLoading, setReflectionLoading] = useState(true);
 
   const sensors = useSensors(useSensor(PointerSensor, {
     activationConstraint: {
@@ -101,6 +104,22 @@ function AppContent() {
       }
     }
   }, [stones, bowl, isClient, isGuest]);
+
+  useEffect(() => {
+    const fetchReflection = async () => {
+      setReflectionLoading(true);
+      try {
+        const result = await getDailyReflection();
+        setReflection(result);
+      } catch (error) {
+        console.error("Failed to fetch daily reflection", error);
+        setReflection("The journey of a thousand miles begins with a single step.");
+      } finally {
+        setReflectionLoading(false);
+      }
+    };
+    fetchReflection();
+  }, []);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -183,7 +202,11 @@ function AppContent() {
           <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <header className="text-center mb-12">
               <h1 className="text-4xl md:text-5xl font-headline font-bold">Over one task</h1>
-              <p className="text-muted-foreground font-body mt-2">when tasks overwhelm</p>
+               {isReflectionLoading ? (
+                <Skeleton className="h-5 w-3/4 md:w-1/2 mx-auto mt-4" />
+              ) : (
+                <p className="text-muted-foreground font-headline italic mt-3 text-lg">{reflection}</p>
+              )}
             </header>
             
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
