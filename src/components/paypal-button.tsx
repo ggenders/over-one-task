@@ -29,7 +29,7 @@ export function PayPalUpgradeButton({ onSuccess }: PayPalButtonProps) {
                 description: "Over one task - Pro Upgrade",
                 amount: {
                     value: "5.00",
-                    currency_code: "USD"
+                    currency_code: "AUD"
                 }
             }]
         });
@@ -52,7 +52,7 @@ export function PayPalUpgradeButton({ onSuccess }: PayPalButtonProps) {
     }
 
     return (
-        <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
+        <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "AUD", intent: "capture" }}>
             <PayPalButtons
                 style={{ layout: "vertical", color: "blue", shape: "rect", label: "paypal", tagline: false }}
                 createOrder={createOrder}
