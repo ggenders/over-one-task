@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState, useEffect } from "react";
@@ -136,7 +135,11 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false,
                 <div className="w-full max-w-xs mt-2">
                     <PayPalUpgradeButton onSuccess={onUpgrade} />
                 </div>
-        
+                
+                <p className="font-body text-xs text-muted-foreground/80 mt-2 max-w-xs">
+                    By continuing, you agree that this is a one-off payment for guest access and we hold no responsibility if the application is altered, deleted, or removed in the future.
+                </p>
+
                 <div className="flex items-center space-x-2 w-full max-w-xs my-0">
                     <Separator className="flex-1" />
                     <span className="text-xs text-muted-foreground">OR</span>
