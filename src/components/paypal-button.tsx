@@ -26,7 +26,7 @@ export function PayPalUpgradeButton({ onSuccess }: PayPalButtonProps) {
     const createOrder = (data: Record<string, unknown>, actions: any) => {
         return actions.order.create({
             purchase_units: [{
-                description: "Over one task - Pro Upgrade",
+                description: "The Cup and Stone - Pro Upgrade",
                 amount: {
                     value: "5.00",
                     currency_code: "AUD"

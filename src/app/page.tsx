@@ -300,8 +300,8 @@ export default function LandingPage() {
       <div className="w-full max-w-md mx-auto">
           <Card className="bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
               <CardHeader className="text-center">
-                  <CardTitle className="font-headline text-4xl md:text-5xl">Over one task</CardTitle>
-                  <CardDescription className="font-body pt-2">when tasks overwhelm</CardDescription>
+                  <CardTitle className="font-headline text-4xl md:text-5xl">The Cup and Stone</CardTitle>
+                  <CardDescription className="font-body pt-2">A quiet space for focus.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="signin" className="w-full">

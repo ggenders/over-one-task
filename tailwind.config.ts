@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Chakra Petch', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
         headline: ['Literata', 'serif'],
         code: ['monospace'],
       },
@@ -82,10 +82,10 @@ export default {
         },
         'accordion-up': {
           from: {
-            height: 'var(--radix-accordion-content-height)',
+            height: '0',
           },
           to: {
-            height: '0',
+            height: 'var(--radix-accordion-content-height)',
           },
         },
       },

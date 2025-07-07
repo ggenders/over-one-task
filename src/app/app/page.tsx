@@ -74,8 +74,14 @@ function AppContent() {
       if (savedIsPro) {
         setIsPro(true);
       }
-
-      let loadedStones = savedStones ? JSON.parse(savedStones) : initialStones;
+      
+      let loadedStones = initialStones;
+      if (savedStones) {
+        // If user is logged in, use saved stones. Otherwise, if they are a guest, use initial stones.
+        if (user || !isGuest) {
+            loadedStones = JSON.parse(savedStones);
+        }
+      }
       
       if (isGuest && !savedIsPro) {
         setStones(loadedStones.slice(0, 2));
@@ -84,13 +90,15 @@ function AppContent() {
       }
 
       if (savedBowl) {
-        setBowl(JSON.parse(savedBowl));
+        if(user || !isGuest) {
+            setBowl(JSON.parse(savedBowl));
+        }
       }
     } catch (error) {
       console.error("Failed to load state from localStorage", error);
       setStones(isGuest ? initialStones.slice(0, 2) : initialStones);
     }
-  }, [isGuest]);
+  }, [isGuest, user]);
 
   useEffect(() => {
     if (isClient) {
@@ -214,7 +222,7 @@ function AppContent() {
         ) : (
           <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <header className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-headline font-bold">Over one task</h1>
+              <h1 className="text-4xl md:text-5xl font-headline font-bold">The Cup and Stone</h1>
                {isReflectionLoading ? (
                 <Skeleton className="h-5 w-3/4 md:w-1/2 mx-auto mt-4" />
               ) : (

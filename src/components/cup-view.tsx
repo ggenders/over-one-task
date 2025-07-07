@@ -13,13 +13,13 @@ type Task = {
   text: string;
 };
 
-interface BowlViewProps {
+interface CupViewProps {
   task: Task | null;
   onComplete: () => void;
   isFocusMode?: boolean;
 }
 
-export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProps) {
+export function BowlView({ task, onComplete, isFocusMode = false }: CupViewProps) {
   const [isCompleting, setIsCompleting] = useState(false);
   const { isOver, setNodeRef } = useDroppable({
     id: 'bowl-droppable',
@@ -64,31 +64,15 @@ export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProp
 
   return (
     <Card ref={setNodeRef} className={cn(
-        "h-full flex flex-col shadow-lg border-primary/20 transition-all duration-300 relative overflow-hidden bg-transparent",
+        "h-full flex flex-col shadow-lg border-primary/20 transition-all duration-300 relative overflow-hidden bg-card",
         isFocusMode && "w-full max-w-3xl h-auto",
-        isOver && !task && "ring-2 ring-accent shadow-[0_0_30px_hsl(var(--accent))] scale-105"
+        isOver && !task && "ring-2 ring-accent shadow-xl"
     )}>
-      <video
-        ref={bowlVideoRef}
-        src="/bowl-video.mp4"
-        loop
-        muted
-        playsInline
-        className={cn("absolute top-0 left-0 w-full h-full object-cover z-0 opacity-25", isCompleting && "hidden")}
-      />
-      <video
-        ref={completedVideoRef}
-        src="/completed-video.mp4"
-        loop
-        muted
-        playsInline
-        className={cn("absolute top-0 left-0 w-full h-full object-cover z-0 opacity-25", !isCompleting && "hidden")}
-      />
-      <div className="relative z-10 flex flex-col h-full bg-card/60 backdrop-blur-sm">
+      <div className="relative z-10 flex flex-col h-full">
         <CardHeader>
           <div className="flex items-center gap-3 text-primary">
             <Target className="w-8 h-8"/>
-            <CardTitle className="font-headline text-3xl">Bowl</CardTitle>
+            <CardTitle className="font-headline text-3xl">The Cup</CardTitle>
           </div>
           <CardDescription className="font-body pt-1">The one task you are focusing on.</CardDescription>
         </CardHeader>
@@ -99,7 +83,7 @@ export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProp
                 <p className="font-headline text-3xl">Complete!</p>
             </div>
           ) : task ? (
-            <div className="text-center p-6 bg-background/50 rounded-lg transition-all duration-300">
+            <div className="text-center p-6 bg-background rounded-lg transition-all duration-300">
               <p className={cn(
                   "font-headline text-2xl md:text-3xl text-foreground",
                   isFocusMode && "text-4xl md:text-5xl lg:text-6xl"
@@ -119,7 +103,7 @@ export function BowlView({ task, onComplete, isFocusMode = false }: BowlViewProp
             <Button 
               onClick={handleComplete} 
               className={cn(
-                "w-full font-body text-lg py-6 bg-primary text-primary-foreground shadow-[0_0_10px_hsl(var(--primary))] hover:shadow-[0_0_20px_hsl(var(--primary))] transition-all duration-300",
+                "w-full font-body text-lg py-6 bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300",
                 isFocusMode && "py-8 text-2xl"
               )}>
               <Check className={cn("mr-2 h-5 w-5", isFocusMode && "h-6 w-6")} />

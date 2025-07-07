@@ -50,7 +50,7 @@ function SortableStoneItem({ stone }: { stone: Task }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="group flex items-center justify-between p-3 rounded-lg bg-background/30 hover:bg-accent/20 transition-colors duration-200 cursor-grab"
+      className="group flex items-center justify-between p-3 rounded-lg bg-background hover:bg-secondary transition-colors duration-200 cursor-grab"
     >
       <div className="flex items-center gap-3 flex-grow font-body">
         <div className="text-accent">
@@ -106,19 +106,19 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false,
   };
 
   return (
-    <Card className="h-full flex flex-col shadow-lg bg-card/80 backdrop-blur-sm border-accent/20">
+    <Card className="h-full flex flex-col shadow-lg bg-card border-accent/20">
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
                 <div className="flex items-center gap-3">
-                    <Mountain className="w-8 h-8 text-foreground" />
-                    <CardTitle className="font-headline text-3xl">Stones</CardTitle>
+                    <Mountain className="w-8 h-8 text-accent" />
+                    <CardTitle className="font-headline text-3xl">The Stones</CardTitle>
                 </div>
-                <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the bowl.</CardDescription>
+                <CardDescription className="font-body pt-1">All the tasks weighing on your mind. Drag to reorder or drop in the cup.</CardDescription>
             </div>
             <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" onClick={() => setIsHelpOpen(true)} className="rounded-full bg-card/60 backdrop-blur-sm hover:bg-accent/20">
-                    <HelpCircle className="h-5 w-5 text-foreground/70" />
+                <Button variant="ghost" size="icon" onClick={() => setIsHelpOpen(true)} className="rounded-full hover:bg-secondary">
+                    <HelpCircle className="h-5 w-5 text-muted-foreground" />
                     <span className="sr-only">How to use</span>
                 </Button>
             </div>
@@ -126,7 +126,7 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false,
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
         {guestLimitReached ? (
-           <div className="flex flex-col items-center gap-4 text-center p-4 bg-background/50 rounded-lg">
+           <div className="flex flex-col items-center gap-4 text-center p-4 bg-background rounded-lg">
                 <Sparkles className="w-12 h-12 text-primary" />
                 <p className="font-body text-muted-foreground">You've reached the guest limit of 2 stones.</p>
                 <p className="font-headline font-bold text-lg text-foreground mt-2">Go Pro for Unlimited Stones</p>
@@ -159,7 +159,7 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false,
               placeholder="Add a new stone..."
               value={newTaskText}
               onChange={(e) => setNewTaskText(e.target.value)}
-              className="font-body bg-background/50 focus:bg-background"
+              className="font-body bg-secondary focus:bg-background"
             />
             <Button type="submit" size="icon" aria-label="Add Task" variant="outline">
               <Plus className="h-4 w-4" />

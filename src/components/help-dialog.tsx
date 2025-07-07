@@ -23,11 +23,11 @@ interface HelpDialogProps {
 export function HelpDialog({ open, onOpenChange, onConfirm, isGuest }: HelpDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px] bg-card/90 backdrop-blur-sm">
+      <DialogContent className="sm:max-w-[525px] bg-card/95 backdrop-blur-sm">
         <DialogHeader>
           <DialogTitle className="font-headline text-2xl">How to Use the App</DialogTitle>
           <DialogDescription className="font-body pt-2">
-            A simple guide to mindful productivity with Bowl and Stone.
+            A simple guide to mindful productivity with The Cup and Stone.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 font-body text-foreground/90">
@@ -36,12 +36,12 @@ export function HelpDialog({ open, onOpenChange, onConfirm, isGuest }: HelpDialo
                 <p>Find a quiet moment. You can make tea or just take a breath before beginning.</p>
             </div>
             <div className="space-y-1">
-                <h3 className="font-headline font-bold">List Your Tasks</h3>
-                <p>Write down everything you need or want to do today. Don’t worry about order—just get it out of your head.</p>
+                <h3 className="font-headline font-bold">List Your Tasks as Stones</h3>
+                <p>Write down everything you need or want to do today. Don’t worry about order—just get it out of your head and into the Stone List.</p>
             </div>
             <div className="space-y-1">
-                <h3 className="font-headline font-bold">Pick One Task</h3>
-                <p>Look over your list and choose one task to focus on. Don’t overthink it—just pick the one that feels right to start with and drop it into the bowl.</p>
+                <h3 className="font-headline font-bold">Pick One Stone for the Cup</h3>
+                <p>Look over your list and choose one task to focus on. Don’t overthink it—just pick the one that feels right to start with and drop it into the Cup.</p>
             </div>
             <div className="space-y-1">
                 <h3 className="font-headline font-bold">Focus on That Task</h3>
