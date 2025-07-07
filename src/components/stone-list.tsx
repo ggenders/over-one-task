@@ -130,9 +130,10 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false,
            <div className="flex flex-col items-center gap-4 text-center p-4 bg-background/50 rounded-lg">
                 <Sparkles className="w-12 h-12 text-primary" />
                 <p className="font-body text-muted-foreground">You've reached the guest limit of 2 stones.</p>
-                <p className="font-body text-sm text-muted-foreground -mt-2">Upgrade for unlimited access as a guest.</p>
+                <p className="font-headline font-bold text-lg text-foreground mt-2">Go Pro for Unlimited Stones</p>
+                <p className="font-body text-sm text-muted-foreground">A simple, one-off payment gives you unlimited access as a guest.</p>
                 
-                <div className="w-full max-w-xs">
+                <div className="w-full max-w-xs mt-2">
                     <PayPalUpgradeButton onSuccess={onUpgrade} />
                 </div>
         
