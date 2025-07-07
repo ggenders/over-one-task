@@ -90,7 +90,7 @@ function AppContent() {
       console.error("Failed to load state from localStorage", error);
       setStones(isGuest ? initialStones.slice(0, 2) : initialStones);
     }
-  }, [isGuestQuery]);
+  }, [isGuest]);
 
   useEffect(() => {
     if (isClient) {
