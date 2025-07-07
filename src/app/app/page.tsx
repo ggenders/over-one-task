@@ -8,6 +8,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { BowlView } from '@/components/cup-view';
 import { StoneList } from '@/components/stone-list';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { getDailyReflection } from '@/ai/flows/daily-reflection-flow';
@@ -35,6 +36,8 @@ function AppContent() {
   const [isAuthLoading, setAuthLoading] = useState(true);
   const [reflection, setReflection] = useState<string>('');
   const [isReflectionLoading, setReflectionLoading] = useState(true);
+  const [isPro, setIsPro] = useState(false);
+  const { toast } = useToast();
 
   const sensors = useSensors(useSensor(PointerSensor, {
     activationConstraint: {
@@ -46,7 +49,6 @@ function AppContent() {
   const isGuestQuery = searchParams.get('guest') === 'true';
 
   useEffect(() => {
-    // Firebase auth is only available on the client
     if (!auth) {
         setAuthLoading(false);
         return;
@@ -55,13 +57,10 @@ function AppContent() {
       setUser(currentUser);
       setAuthLoading(false);
     });
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
   const isOwner = user?.email === OWNER_EMAIL;
-  // A user is a guest if they are not logged in and came via the guest link.
-  // Any logged in user, including the owner, is not a guest.
   const isGuest = !user && isGuestQuery;
 
 
@@ -70,10 +69,15 @@ function AppContent() {
     try {
       const savedStones = localStorage.getItem('stones');
       const savedBowl = localStorage.getItem('bowl');
+      const savedIsPro = localStorage.getItem('isProUser') === 'true';
+
+      if (savedIsPro) {
+        setIsPro(true);
+      }
 
       let loadedStones = savedStones ? JSON.parse(savedStones) : initialStones;
       
-      if (isGuest) {
+      if (isGuest && !savedIsPro) {
         setStones(loadedStones.slice(0, 2));
       } else {
         setStones(loadedStones);
@@ -86,7 +90,7 @@ function AppContent() {
       console.error("Failed to load state from localStorage", error);
       setStones(isGuest ? initialStones.slice(0, 2) : initialStones);
     }
-  }, [isGuest]);
+  }, [isGuestQuery]);
 
   useEffect(() => {
     if (isClient) {
@@ -120,6 +124,15 @@ function AppContent() {
     };
     fetchReflection();
   }, []);
+  
+  const handleUpgradeSuccess = () => {
+    setIsPro(true);
+    localStorage.setItem('isProUser', 'true');
+    toast({
+      title: "Upgrade Successful!",
+      description: "You now have full access to add unlimited stones.",
+    });
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -214,7 +227,14 @@ function AppContent() {
                 <BowlView task={bowl} onComplete={handleCompleteTask} />
               </div>
               <div className="lg:col-span-2 min-h-[500px]">
-                <StoneList stones={stones} onAddTask={handleAddTask} isGuest={isGuest} isOwner={isOwner} />
+                <StoneList 
+                  stones={stones} 
+                  onAddTask={handleAddTask} 
+                  isGuest={isGuest} 
+                  isOwner={isOwner} 
+                  isPro={isPro}
+                  onUpgrade={handleUpgradeSuccess}
+                />
               </div>
             </div>
           </div>

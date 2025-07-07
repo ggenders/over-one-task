@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect } from "react";
@@ -9,8 +10,9 @@ import { Plus, Mountain, Sparkles, HelpCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useToast } from "@/hooks/use-toast";
 import { HelpDialog } from "./help-dialog";
+import { PayPalUpgradeButton } from "./paypal-button";
+import { Separator } from "./ui/separator";
 
 type Task = {
   id: string;
@@ -22,6 +24,8 @@ interface StoneListProps {
   onAddTask: (text: string) => void;
   isGuest?: boolean;
   isOwner?: boolean;
+  isPro?: boolean;
+  onUpgrade: () => void;
 }
 
 function SortableStoneItem({ stone }: { stone: Task }) {
@@ -60,16 +64,13 @@ function SortableStoneItem({ stone }: { stone: Task }) {
 }
 
 
-export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false }: StoneListProps) {
+export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false, isPro = false, onUpgrade }: StoneListProps) {
   const [newTaskText, setNewTaskText] = useState("");
-  const { toast } = useToast();
-  const guestLimitReached = isGuest && stones.length >= 2;
+  const guestLimitReached = isGuest && !isPro && stones.length >= 2;
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
     if (isOwner) {
-      // The owner is recognized and will not see the help dialog.
-      // We can also permanently mark it as seen for them.
       localStorage.setItem('hasSeenHelpDialog', 'true');
       setIsHelpOpen(false);
       return;
@@ -80,7 +81,7 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false 
             setIsHelpOpen(true);
             sessionStorage.setItem('hasSeenHelpDialog', 'true');
         }
-    } else { // Registered user
+    } else { 
         if (localStorage.getItem('hasSeenHelpDialog') !== 'true') {
             setIsHelpOpen(true);
         }
@@ -97,11 +98,6 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (guestLimitReached) {
-      toast({
-        title: "Guest Limit Reached",
-        description: "Please create an account to add more stones.",
-        variant: "destructive",
-      });
       return;
     }
     if (newTaskText.trim()) {
@@ -132,14 +128,26 @@ export function StoneList({ stones, onAddTask, isGuest = false, isOwner = false 
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
         {guestLimitReached ? (
            <div className="flex flex-col items-center gap-4 text-center p-4 bg-background/50 rounded-lg">
-              <p className="font-body text-muted-foreground">You've reached the guest limit of 2 stones.</p>
-              <Link href="/" passHref>
-                  <Button className="w-full font-body text-lg py-6 bg-primary text-primary-foreground shadow-[0_0_10px_hsl(var(--primary))] hover:shadow-[0_0_20px_hsl(var(--primary))] transition-all duration-300">
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Upgrade & Save Progress
-                  </Button>
-              </Link>
-          </div>
+                <Sparkles className="w-12 h-12 text-primary" />
+                <p className="font-body text-muted-foreground">You've reached the guest limit of 2 stones.</p>
+                <p className="font-body text-sm text-muted-foreground -mt-2">Upgrade for unlimited access as a guest.</p>
+                
+                <div className="w-full max-w-xs">
+                    <PayPalUpgradeButton onSuccess={onUpgrade} />
+                </div>
+        
+                <div className="flex items-center space-x-2 w-full max-w-xs my-0">
+                    <Separator className="flex-1" />
+                    <span className="text-xs text-muted-foreground">OR</span>
+                    <Separator className="flex-1" />
+                </div>
+        
+                <Link href="/" passHref className="w-full max-w-xs">
+                    <Button variant="outline" className="w-full">
+                        Sign Up & Save (Free)
+                    </Button>
+                </Link>
+            </div>
         ) : (
           <form onSubmit={handleAddTask} className="flex gap-2">
             <Input
